@@ -23,16 +23,15 @@ export const apiSlice = createApi({
         method: 'DELETE',
       }),
     }),
+    updateTodo: builder.mutation({
+      query: ({ id, data }: { id: number; data: Partial<Todo> }) => ({
+        url: `/todos/${id}`,
+        method: 'PATCH',
+        body: data,
+      }),
+    }),
   }),
 });
-
-export const selectIncompleteTodosCount = createSelector(
-  [(state) => state],
-  (state) => {
-    return 0;
-
-  }
-);
 
 export const { useGetTodosQuery, useAddTodoMutation, useDeleteTodoMutation } = apiSlice;
 

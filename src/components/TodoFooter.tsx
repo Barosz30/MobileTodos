@@ -1,13 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { useTodos } from '../context/TodosProvider';
 import { FilterBy } from '../types/filter';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setFilteredTodos } from '../store/filteredTodoSlice/slice';
-import { selectIncompleteTodosCount, useGetTodosQuery } from '../store/apiSlice/apiSlice';
+import { useGetTodosQuery } from '../store/apiSlice/apiSlice';
 
 const TodoFooter: React.FC = () => {
-  const { filter, setFilter } = useTodos();
+  const [ filter, setFilter ] = useState(FilterBy.All);
   const { data: todosFromServer } = useGetTodosQuery({});
 
   const dispatch = useDispatch();
