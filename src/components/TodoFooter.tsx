@@ -2,20 +2,40 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTodos } from '../context/TodosProvider';
 import { FilterBy } from '../types/filter';
+import { useDispatch, useSelector } from 'react-redux';
+import { setFilteredTodos } from '../store/filteredTodoSlice/slice';
+import { selectIncompleteTodosCount, useGetTodosQuery } from '../store/apiSlice/apiSlice';
 
 const TodoFooter: React.FC = () => {
-  const { filter, setFilter, counter } = useTodos();
+  const { filter, setFilter } = useTodos();
+  const { data: todosFromServer } = useGetTodosQuery({});
+
+  const dispatch = useDispatch();
+
+  const handleClickAll = () => {
+    dispatch(setFilteredTodos(todosFromServer));
+  }
+
+  const handleClickActive = () => {
+    const active = todosFromServer.filter((todo: { completed: boolean; }) => todo.completed === false)
+    dispatch(setFilteredTodos(active));
+  }
+
+const handleClickCompleted = () => {
+  const completed = todosFromServer.filter((todo: { completed: boolean; }) => todo.completed === true);
+  dispatch(setFilteredTodos(completed));
+};
 
   return (
     <View style={styles.footer} data-cy="Footer">
       <Text style={styles.todoCount} data-cy="TodosCounter">
-        {counter} items left
+        {todosFromServer.length || 0} items left
       </Text>
 
       <View style={styles.filter} data-cy="Filter">
         <TouchableOpacity
           style={filter === FilterBy.All ? styles.selectedFilterLink : styles.filterLink}
-          onPress={() => setFilter(FilterBy.All)}
+          onPress={handleClickAll}
           data-cy="FilterLinkAll"
         >
           <Text>All</Text>
@@ -23,7 +43,7 @@ const TodoFooter: React.FC = () => {
 
         <TouchableOpacity
           style={filter === FilterBy.Active ? styles.selectedFilterLink : styles.filterLink}
-          onPress={() => setFilter(FilterBy.Active)}
+          onPress={handleClickActive}
           data-cy="FilterLinkActive"
         >
           <Text>Active</Text>
@@ -31,7 +51,7 @@ const TodoFooter: React.FC = () => {
 
         <TouchableOpacity
           style={filter === FilterBy.Completed ? styles.selectedFilterLink : styles.filterLink}
-          onPress={() => setFilter(FilterBy.Completed)}
+          onPress={handleClickCompleted}
           data-cy="FilterLinkCompleted"
         >
           <Text>Completed</Text>

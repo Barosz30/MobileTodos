@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Todo } from '../types/Todo';
+import { useDeleteTodoMutation, useGetTodosQuery } from '../store/apiSlice/apiSlice';
+
+import useTodos from '../utils/updateTodos';
 
 type Props = {
   todo: Todo;
@@ -10,9 +13,22 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
   const { title, completed } = todo;
   const [isEditable, setIsEditable] = useState(false);
   const [value, setValue] = useState(title);
+  const [deleteTodoMutation] = useDeleteTodoMutation();
+  const { updateTodos }  = useTodos();
 
   const handeleClickOnTodo = () => {
     setIsEditable(true);
+  };
+
+  const handleDeleteTodo = async (id: number) => {
+    try {
+      await deleteTodoMutation(id);
+      updateTodos();
+
+    } catch (error) {
+      
+      console.error('Error deleting todo:', error);
+    }
   };
 
   return (
@@ -21,15 +37,12 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
       
       {!isEditable && (
         <>
-        
-          <TouchableOpacity
-          onPress={handeleClickOnTodo}
-        >
+        <TouchableOpacity onPress={handeleClickOnTodo}>
           <Text style={{ textDecorationLine: completed ? 'line-through' : 'none' }}>
             {title}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setIsEditable(true)}>
+        <TouchableOpacity onPress={() => handleDeleteTodo(todo.id)}>
           <Text style={styles.deleteTodo}>×</Text>
         </TouchableOpacity>
       </>
