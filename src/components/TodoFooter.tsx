@@ -9,6 +9,8 @@ const TodoFooter: React.FC = () => {
   const [ filter, setFilter ] = useState(FilterBy.All);
   const { data: todosFromServer } = useGetTodosQuery({});
 
+  const counter = todosFromServer.filter((todo: { completed: boolean; }) => todo.completed === false).length
+
   const dispatch = useDispatch();
 
   const handleClickAll = () => {
@@ -28,7 +30,7 @@ const handleClickCompleted = () => {
   return (
     <View style={styles.footer} data-cy="Footer">
       <Text style={styles.todoCount} data-cy="TodosCounter">
-        {todosFromServer.length || 0} items left
+        {counter || 0} items left
       </Text>
 
       <View style={styles.filter} data-cy="Filter">
@@ -57,8 +59,6 @@ const handleClickCompleted = () => {
         </TouchableOpacity>
       </View>
 
-      {/* don't show this button if there are no completed todos */}
-      {/* TODO: Implement the Clear completed button */}
     </View>
   );
 };
