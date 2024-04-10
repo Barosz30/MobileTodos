@@ -17,7 +17,6 @@ const TodoList: React.FC = () => {
     const fetchDataAndUpdate = () => {
       try {
         updateTodos();
-        console.log("update poszedł")
       } catch (error) {
         console.error("Error fetching todos:", error);
       }

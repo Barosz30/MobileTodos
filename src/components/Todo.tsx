@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Todo } from '../types/Todo';
-import { useDeleteTodoMutation, useGetTodosQuery } from '../store/apiSlice/apiSlice';
+import { useDeleteTodoMutation, useUpdateTodoMutation } from '../store/apiSlice/apiSlice';
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 import useTodos from '../utils/updateTodos';
 
@@ -15,6 +16,9 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
   const [value, setValue] = useState(title);
   const [deleteTodoMutation] = useDeleteTodoMutation();
   const { updateTodos }  = useTodos();
+  const [updateTodo] = useUpdateTodoMutation();
+
+  const [checkboxState, setCheckboxState] = useState(completed);
 
   const handeleClickOnTodo = () => {
     setIsEditable(true);
@@ -31,10 +35,22 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
     }
   };
 
+  const handleBlur = async (id: number) => {
+    try {
+      setIsEditable(false);
+      await updateTodo({ id: id, data: { title: value.trim() }});
+      updateTodos();
+
+    } catch (error) {
+      
+      console.error('Error updating todo title:', error);
+    }
+  };
+
   return (
     <View style={styles.todo}>
       
-      
+      <BouncyCheckbox isChecked={checkboxState} onPress={(isChecked: boolean) => {}} />
       {!isEditable && (
         <>
         <TouchableOpacity onPress={handeleClickOnTodo}>
@@ -50,11 +66,11 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
 
       {isEditable && (
         <TextInput
-          value={value}
-          onChangeText={setValue}
-          onBlur={() => setIsEditable(false)}
-          autoFocus={true}
-        />
+        defaultValue={value}
+        onChangeText={(value) => setValue(value)}
+        onEndEditing={() => handleBlur(todo.id)}
+        autoFocus={true}
+      />
       )}
       
         

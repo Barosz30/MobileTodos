@@ -23,9 +23,7 @@ export const NewTodo = () => {
 
     try {
       await addTodoMutation(newTodo);
-      console.log("1")
       updateTodos();
-      console.log("2")
 
     } catch (error) {
       console.error('Error adding todo:', error);

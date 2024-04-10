@@ -33,7 +33,7 @@ export const apiSlice = createApi({
   }),
 });
 
-export const { useGetTodosQuery, useAddTodoMutation, useDeleteTodoMutation } = apiSlice;
+export const { useGetTodosQuery, useAddTodoMutation, useDeleteTodoMutation, useUpdateTodoMutation } = apiSlice;
 
 
 
