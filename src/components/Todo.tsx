@@ -11,7 +11,7 @@ type Props = {
 };
 
 export const SingleTodo: React.FC<Props> = ({ todo }) => {
-  const { title, completed } = todo;
+  const { title, completed, id } = todo;
   const [isEditable, setIsEditable] = useState(false);
   const [value, setValue] = useState(title);
   const [deleteTodoMutation] = useDeleteTodoMutation();
@@ -20,11 +20,13 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
 
   const [checkboxState, setCheckboxState] = useState(completed);
 
+  console.log(checkboxState)
+
   const handeleClickOnTodo = () => {
     setIsEditable(true);
   };
 
-  const handleDeleteTodo = async (id: number) => {
+  const handleDeleteTodo = async () => {
     try {
       await deleteTodoMutation(id);
       updateTodos();
@@ -35,10 +37,10 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
     }
   };
 
-  const handleBlur = async (id: number) => {
+  const handleBlur = async () => {
     try {
       setIsEditable(false);
-      await updateTodo({ id: id, data: { title: value.trim() }});
+      await updateTodo({ id, data: { title: value.trim() }});
       updateTodos();
 
     } catch (error) {
@@ -47,10 +49,24 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
     }
   };
 
+  const handleCheckbox = async () => {
+    try {
+      const updatedCheckboxState = !checkboxState;
+      setCheckboxState(updatedCheckboxState);
+
+      await updateTodo({ id, data: { completed: updatedCheckboxState }});
+      updateTodos();
+      console.log(todo.completed)
+
+    } catch (error) {
+      console.error('Error updating todo status:', error);
+    }
+  }
+
   return (
     <View style={styles.todo}>
       
-      <BouncyCheckbox isChecked={checkboxState} onPress={(isChecked: boolean) => {}} />
+      <BouncyCheckbox isChecked={checkboxState} onPress={() => handleCheckbox()} />
       {!isEditable && (
         <>
         <TouchableOpacity onPress={handeleClickOnTodo}>
@@ -58,7 +74,7 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
             {title}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDeleteTodo(todo.id)}>
+        <TouchableOpacity onPress={() => handleDeleteTodo()}>
           <Text style={styles.deleteTodo}>×</Text>
         </TouchableOpacity>
       </>
@@ -68,7 +84,7 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
         <TextInput
         defaultValue={value}
         onChangeText={(value) => setValue(value)}
-        onEndEditing={() => handleBlur(todo.id)}
+        onEndEditing={() => handleBlur()}
         autoFocus={true}
       />
       )}
