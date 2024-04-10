@@ -12,15 +12,13 @@ type Props = {
 
 export const SingleTodo: React.FC<Props> = ({ todo }) => {
   const { title, completed, id } = todo;
-  const [isEditable, setIsEditable] = useState(false);
-  const [value, setValue] = useState(title);
+  const [ isEditable, setIsEditable ] = useState(false);
+  const [ titleValue, setTitleValue ] = useState(title);
   const [deleteTodoMutation] = useDeleteTodoMutation();
   const { updateTodos }  = useTodos();
   const [updateTodo] = useUpdateTodoMutation();
 
   const [checkboxState, setCheckboxState] = useState(completed);
-
-  console.log(checkboxState)
 
   const handeleClickOnTodo = () => {
     setIsEditable(true);
@@ -40,7 +38,7 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
   const handleBlur = async () => {
     try {
       setIsEditable(false);
-      await updateTodo({ id, data: { title: value.trim() }});
+      await updateTodo({ id, data: { title: titleValue.trim() }});
       updateTodos();
 
     } catch (error) {
@@ -56,7 +54,6 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
 
       await updateTodo({ id, data: { completed: updatedCheckboxState }});
       updateTodos();
-      console.log(todo.completed)
 
     } catch (error) {
       console.error('Error updating todo status:', error);
@@ -70,8 +67,8 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
       {!isEditable && (
         <>
         <TouchableOpacity onPress={handeleClickOnTodo}>
-          <Text style={{ textDecorationLine: completed ? 'line-through' : 'none' }}>
-            {title}
+          <Text style={{ textDecorationLine: checkboxState ? 'line-through' : 'none' }}>
+            {titleValue}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => handleDeleteTodo()}>
@@ -82,8 +79,8 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
 
       {isEditable && (
         <TextInput
-        defaultValue={value}
-        onChangeText={(value) => setValue(value)}
+        defaultValue={title}
+        onChangeText={(value) => setTitleValue(value)}
         onEndEditing={() => handleBlur()}
         autoFocus={true}
       />
