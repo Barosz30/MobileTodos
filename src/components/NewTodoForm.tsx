@@ -35,21 +35,15 @@ export const NewTodo = () => {
 
     return (
         <View style={styles.header}>
-        {/* this buttons is active only if there are some active todos */}
-        <TouchableOpacity
-          style={styles.toggleAllButton}
-          onPress={() => {}}
-          // Add your logic for handling active todos
-        />
+        <TouchableOpacity />
 
-        {/* Add a todo on form submit */}
         <TextInput
-        style={styles.newTodoField}
-        placeholder="What needs to be done?"
-        value={newTodoTitle}
-        onChangeText={(text) => setNewTodoTitle(text)}
-        onSubmitEditing={handleAddTodo} // Call handleAddTodo on form submission
-      />
+          style={styles.newTodoField}
+          placeholder="What needs to be done?"
+          value={newTodoTitle}
+          onChangeText={(text) => setNewTodoTitle(text)}
+          onSubmitEditing={handleAddTodo}
+        />
       </View>
     );
   };
@@ -61,9 +55,6 @@ export const NewTodo = () => {
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 20,
-    },
-    toggleAllButton: {
-      // Add your styles for the toggle all button
     },
     newTodoField: {
       flex: 1,

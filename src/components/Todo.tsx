@@ -3,22 +3,19 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { Todo } from '../types/Todo';
 import { useDeleteTodoMutation, useUpdateTodoMutation } from '../store/apiSlice/apiSlice';
 import BouncyCheckbox from "react-native-bouncy-checkbox";
-
 import useTodos from '../utils/updateTodos';
 
 type Props = {
   todo: Todo;
 };
 
-export const SingleTodo: React.FC<Props> = ({ todo }) => {
-  const { title, completed, id } = todo;
+export const SingleTodo: React.FC<Props> = ({ todo: { title, completed, id } }) => {
   const [ isEditable, setIsEditable ] = useState(false);
   const [ titleValue, setTitleValue ] = useState(title);
-  const [deleteTodoMutation] = useDeleteTodoMutation();
+  const [ deleteTodoMutation ] = useDeleteTodoMutation();
   const { updateTodos }  = useTodos();
-  const [updateTodo] = useUpdateTodoMutation();
-
-  const [checkboxState, setCheckboxState] = useState(completed);
+  const [ updateTodo ] = useUpdateTodoMutation();
+  const [ checkboxState, setCheckboxState ] = useState(completed);
 
   const handeleClickOnTodo = () => {
     setIsEditable(true);
@@ -28,9 +25,7 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
     try {
       await deleteTodoMutation(id);
       updateTodos();
-
     } catch (error) {
-      
       console.error('Error deleting todo:', error);
     }
   };
@@ -40,21 +35,17 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
       setIsEditable(false);
       await updateTodo({ id, data: { title: titleValue.trim() }});
       updateTodos();
-
     } catch (error) {
-      
       console.error('Error updating todo title:', error);
     }
   };
 
-  const handleCheckbox = async () => {
+  const handleToggleCompleted = async () => {
     try {
       const updatedCheckboxState = !checkboxState;
       setCheckboxState(updatedCheckboxState);
-
       await updateTodo({ id, data: { completed: updatedCheckboxState }});
       updateTodos();
-
     } catch (error) {
       console.error('Error updating todo status:', error);
     }
@@ -62,19 +53,18 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
 
   return (
     <View style={styles.todo}>
-      
-      <BouncyCheckbox isChecked={checkboxState} onPress={() => handleCheckbox()} />
+      <BouncyCheckbox isChecked={checkboxState} onPress={() => handleToggleCompleted()} />
       {!isEditable && (
         <>
-        <TouchableOpacity onPress={handeleClickOnTodo}>
-          <Text style={{ textDecorationLine: checkboxState ? 'line-through' : 'none' }}>
-            {titleValue}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => handleDeleteTodo()}>
-          <Text style={styles.deleteTodo}>×</Text>
-        </TouchableOpacity>
-      </>
+          <TouchableOpacity onPress={handeleClickOnTodo}>
+            <Text style={{ textDecorationLine: checkboxState ? 'line-through' : 'none' }}>
+              {titleValue}
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => handleDeleteTodo()}>
+            <Text style={styles.deleteTodo}>×</Text>
+          </TouchableOpacity>
+        </>
       )}
 
       {isEditable && (
@@ -85,8 +75,6 @@ export const SingleTodo: React.FC<Props> = ({ todo }) => {
         autoFocus={true}
       />
       )}
-      
-        
     </View>
   );
 };

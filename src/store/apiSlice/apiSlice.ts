@@ -1,13 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { Todo } from '../../types/Todo';
-import { createSelector } from '@reduxjs/toolkit';
 import { USER_ID } from '../../constans/constans';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://mate.academy/students-api' }),
   endpoints: (builder) => ({
-    getTodos: builder.query({
+    getTodos: builder.query<Todo[], unknown>({
       query: () => `/todos?userId=${USER_ID}`,
     }),
     addTodo: builder.mutation({
@@ -37,9 +36,3 @@ export const { useGetTodosQuery, useAddTodoMutation, useDeleteTodoMutation, useU
 
 
 
-
-
-// export const selectTodos = createSelector(
-//   (state) => state.api.data.getTodos, 
-//   (getTodos) => getTodos.data as Todo[]
-// );
